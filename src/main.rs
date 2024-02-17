@@ -10,8 +10,7 @@ use clap::Parser;
 use tabwriter::TabWriter;
 
 #[derive(Parser)]
-#[command(name = "duckmail")]
-#[command(bin_name = "duckmail")]
+#[command(version, about, long_about = None)]
 enum DuckMailCli {
     /// Sets the access token in the config file
     Token(TokenArg),
@@ -32,7 +31,6 @@ struct NewArg {
 }
 
 #[derive(clap::Args)]
-#[command(version, about, long_about = None)]
 struct AddEmailArgs {
     /// The email address to add to the config file
     email: String,
@@ -52,10 +50,11 @@ fn main() -> anyhow::Result<()> {
     match args {
         DuckMailCli::New(args) => {
             let email = configdb.create_email(args.note.unwrap_or_default())?;
-            println!("[*] Created new email: {}", email);
+            println!("[*] Created new email: {}", email)
         }
         DuckMailCli::Add(args) => {
             configdb.add_email(&args.email, args.note.unwrap_or_default())?;
+            println!("[*] Added {} to config", args.email)
         }
         DuckMailCli::Show => {
             let emails = configdb.return_emails()?;
@@ -69,7 +68,8 @@ fn main() -> anyhow::Result<()> {
             println!("{}", String::from_utf8(tw.into_inner()?)?);
         }
         DuckMailCli::Token(args) => {
-            println!("[*] Token ({}) added to config file", args.token);
+            println!("[*] Token ({}) added to config file\n\
+            [!] WARNING: If this token is leaked there is no way revoke/invalidate it!", args.token);
             configdb.set_token(args.token)?;
         }
         DuckMailCli::Nuke => {
