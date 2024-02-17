@@ -84,10 +84,13 @@ pub mod db {
             Ok(true)
         }
 
-        pub fn remove_email(&self, email: String) -> anyhow::Result<bool> {
+        pub fn remove_email(&self, email: &String) -> anyhow::Result<bool> {
             let mut config_data = self.load_config()?;
-            // if let Some(_) = config_data.emails.remove(&Email(email)) {
-            if config_data.emails.remove(&Email(email)).is_some() {
+            if config_data
+                .emails
+                .remove(&Email(email.to_string()))
+                .is_some()
+            {
                 self.write_config(&config_data)?;
                 Ok(true)
             } else {

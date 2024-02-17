@@ -17,10 +17,18 @@ enum DuckMailCli {
     New(NewArg),
     /// Adds an email address to the config file. Optionally, you can add a note to the email address
     Add(AddEmailArgs),
+    /// Removes an email address from the config file
+    Remove(RemoveEmailArg),
     /// Shows all the email addresses in the config file
     Show,
     /// Removes all email addresses from the config file. Use with caution.
     Nuke,
+}
+
+#[derive(clap::Args)]
+struct TokenArg {
+    /// The access token to add to the config file
+    token: String,
 }
 
 #[derive(clap::Args)]
@@ -38,9 +46,9 @@ struct AddEmailArgs {
 }
 
 #[derive(clap::Args)]
-struct TokenArg {
-    /// The access token to add to the config file
-    token: String,
+struct RemoveEmailArg {
+    /// The email address to remove from the config file
+    email: String,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -54,6 +62,13 @@ fn main() -> anyhow::Result<()> {
         DuckMailCli::Add(args) => {
             configdb.add_email(&args.email, args.note.unwrap_or_default())?;
             println!("[*] Added {} to config", args.email)
+        }
+        DuckMailCli::Remove(args) => {
+            if configdb.remove_email(&args.email)? {
+                println!("[*] Removed {} from config", args.email)
+            } else {
+                println!("[!] {} not found in config", args.email)
+            }
         }
         DuckMailCli::Show => {
             let emails = configdb.return_emails()?;
@@ -77,7 +92,7 @@ fn main() -> anyhow::Result<()> {
         DuckMailCli::Nuke => {
             let emails = configdb.return_emails()?;
             emails.iter().for_each(|(email, _)| {
-                configdb.remove_email(email.to_string()).unwrap();
+                configdb.remove_email(email).unwrap();
                 println!("[*] Removing email: {}", email);
             });
         }
