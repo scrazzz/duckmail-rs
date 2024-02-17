@@ -1,9 +1,8 @@
 use std::io::Write;
 
-use crate::configdb::ConfigDB;
+use crate::config::db::ConfigDB;
 
-mod configdata;
-mod configdb;
+mod config;
 mod network;
 
 use clap::Parser;
@@ -68,8 +67,11 @@ fn main() -> anyhow::Result<()> {
             println!("{}", String::from_utf8(tw.into_inner()?)?);
         }
         DuckMailCli::Token(args) => {
-            println!("[*] Token ({}) added to config file\n\
-            [!] WARNING: If this token is leaked there is no way revoke/invalidate it!", args.token);
+            println!(
+                "[*] Token ({}) added to config file\n\
+            [!] WARNING: If this token is leaked there is no way revoke/invalidate it!",
+                args.token
+            );
             configdb.set_token(args.token)?;
         }
         DuckMailCli::Nuke => {
