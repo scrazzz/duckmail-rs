@@ -1,12 +1,10 @@
-use std::io::Write;
-
 use crate::config::db::Database;
 
 mod config;
 mod network;
 
 use clap::Parser;
-use tabwriter::TabWriter;
+use prettytable::{format, row, Table};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -71,15 +69,14 @@ fn main() -> anyhow::Result<()> {
             }
         }
         DuckMailCli::Show => {
+            let mut table = Table::new();
+            table.set_format(*format::consts::FORMAT_BOX_CHARS);
+            table.add_row(row![bBYc => "ID", "EMAIL", "NOTE"]);
             let emails = configdb.return_emails()?;
-            let mut tw = TabWriter::new(vec![]);
-            let mut fmt = String::from("EMAIL\tNOTE\n");
-            for (email, note) in emails {
-                fmt.push_str(&format!("{}\t{}\n", email, note));
-            }
-            tw.write_all(fmt.as_bytes())?;
-            tw.flush()?;
-            println!("{}", String::from_utf8(tw.into_inner()?)?);
+            emails.iter().enumerate().for_each(|(idx, (email, note))| {
+                table.add_row(row![idx + 1, email, note]);
+            });
+            table.printstd();
         }
         DuckMailCli::Token(args) => {
             println!(
