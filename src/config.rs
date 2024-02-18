@@ -9,7 +9,7 @@ pub mod data {
     pub struct Note(pub String);
 
     #[derive(Default, Serialize, Deserialize, Debug)]
-    pub struct ConfigData {
+    pub struct Config {
         pub access_token: String,
         pub emails: HashMap<Email, Note>,
     }
@@ -19,34 +19,35 @@ pub mod db {
     use anyhow::Context;
     use std::{fs::File, io::BufReader, path::PathBuf};
 
-    use super::data::{ConfigData, Email, Note};
+    use super::data::{Config, Email, Note};
     use crate::network;
 
-    pub struct ConfigDB {
+    pub struct Database {
         path: PathBuf,
     }
 
-    impl ConfigDB {
+    impl Database {
         pub fn new(filename: &str) -> anyhow::Result<Self> {
             let path = dirs::config_dir().unwrap().join(filename);
             if path.exists() {
                 // println!("[DEBUG] Config FOUND at: {:?}", path);
-                return Ok(ConfigDB { path });
+                return Ok(Database { path });
             }
             let file = File::create(&path)?;
-            serde_json::to_writer(file, &ConfigData::default())?; // Initialize
-                                                                  // println!("[DEBUG] config CREATED at: {:?}", path);
-            Ok(ConfigDB { path })
+            // Initialize
+            serde_json::to_writer(file, &Config::default())?;
+            // println!("[DEBUG] config CREATED at: {:?}", path);
+            Ok(Database { path })
         }
 
-        pub fn load_config(&self) -> anyhow::Result<ConfigData> {
+        pub fn load_config(&self) -> anyhow::Result<Config> {
             let file = File::open(&self.path)?;
             let reader = BufReader::new(file);
-            let config_data: ConfigData = serde_json::from_reader(reader)?;
+            let config_data = serde_json::from_reader(reader)?;
             Ok(config_data)
         }
 
-        pub fn write_config(&self, data: &ConfigData) -> anyhow::Result<()> {
+        pub fn write_config(&self, data: &Config) -> anyhow::Result<()> {
             let writer = File::create(&self.path)?;
             serde_json::to_writer(writer, &data)
                 .with_context(|| "Failed to write new config".to_string())

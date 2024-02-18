@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use crate::config::db::ConfigDB;
+use crate::config::db::Database;
 
 mod config;
 mod network;
@@ -52,7 +52,7 @@ struct RemoveEmailArg {
 }
 
 fn main() -> anyhow::Result<()> {
-    let configdb = ConfigDB::new("duckemail.config.json")?;
+    let configdb = Database::new("duckemail.config.json")?;
     let args = DuckMailCli::parse();
     match args {
         DuckMailCli::New(args) => {
