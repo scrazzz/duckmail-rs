@@ -12,7 +12,7 @@ A simple CLI program to manage duckduckgo emails.
 $ duckmail --help
 Create and manage duckduckgo email addresses
 
-Usage: duckmail.exe <COMMAND>
+Usage: duckmail <COMMAND>
 
 Commands:
   token   Sets the access token in the config file
