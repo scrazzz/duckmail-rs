@@ -12,7 +12,7 @@ pub fn create_email(token: String) -> anyhow::Result<String> {
         .set("origin", "https://duckduckgo.com")
         .set("referer", "https://duckduckgo.com/")
         .call()
-        .with_context(|| "Failed to create email. Is your access_token valid?".to_string())?;
+        .with_context(|| "Failed to create email".to_string())?;
     // println!("[DEBUG] {}", response.into_string()?);
     Ok(response.into_json::<APIResponse>()?.address)
 }
