@@ -20,7 +20,7 @@ pub mod db {
     use std::{fs::File, io::BufReader, path::PathBuf};
 
     use super::data::{Config, Email, Note};
-    use crate::network;
+    use crate::{network, utils};
 
     pub struct Database {
         path: PathBuf,
@@ -68,15 +68,11 @@ pub mod db {
             }
             let created_email = network::create_email(token)?;
             self.add_email(&created_email, note)?;
-            Ok(created_email + "@duck.com")
+            Ok(utils::format_email(&created_email))
         }
 
-        pub fn add_email(&self, email: &String, note: String) -> anyhow::Result<bool> {
-            let email = if email.contains("@duck.com") {
-                Email(email.to_string())
-            } else {
-                Email(email.to_string() + "@duck.com")
-            };
+        pub fn add_email(&self, email: &str, note: String) -> anyhow::Result<bool> {
+            let email = Email(utils::format_email(email));
             let note = Note(note);
             let mut config_data = self.load_config()?;
 
