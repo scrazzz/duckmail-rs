@@ -58,14 +58,29 @@ fn main() -> anyhow::Result<()> {
             println!("[*] Created new email: {}", email)
         }
         DuckMailCli::Add(args) => {
-            configdb.add_email(&args.email, args.note.unwrap_or_default())?;
-            println!("[*] Added {} to config", args.email)
+            let fmt_email = if args.email.contains("@duck.com") {
+                args.email
+            } else {
+                args.email + "@duck.com"
+            };
+            let is_added = configdb.add_email(&fmt_email, args.note.unwrap_or_default())?;
+            if !is_added {
+                println!("[!] {} already exists", fmt_email);
+                return Ok(());
+            } else {
+                println!("[*] Added {} to database", fmt_email);
+            }
         }
         DuckMailCli::Remove(args) => {
-            if configdb.remove_email(&args.email)? {
-                println!("[*] Removed {} from config", args.email)
+            let fmt_email = if !args.email.contains("@duck.com") {
+                args.email + "@duck.com"
             } else {
-                println!("[!] {} not found in config", args.email)
+                args.email
+            };
+            if configdb.remove_email(&fmt_email)? {
+                println!("[*] Removed {} from database", fmt_email)
+            } else {
+                println!("[!] {} not found in database", fmt_email)
             }
         }
         DuckMailCli::Show => {

@@ -71,7 +71,7 @@ pub mod db {
             Ok(created_email + "@duck.com")
         }
 
-        pub fn add_email(&self, email: &String, note: String) -> anyhow::Result<()> {
+        pub fn add_email(&self, email: &String, note: String) -> anyhow::Result<bool> {
             let email = if email.contains("@duck.com") {
                 Email(email.to_string())
             } else {
@@ -79,10 +79,23 @@ pub mod db {
             };
             let note = Note(note);
             let mut config_data = self.load_config()?;
-            config_data.emails.entry(email).or_insert(note);
-            self.write_config(&config_data)?;
-            // println!("[DEBUG] Updated config.data.emails: {:?}", config_data);
-            Ok(())
+
+            // Case 1: Email exists and new note to add is not empty
+            if config_data.emails.contains_key(&email) && !note.0.is_empty() {
+                config_data.emails.insert(email, note);
+                self.write_config(&config_data)?;
+                Ok(true)
+            }
+            // Case 2: Email exists and new note to add is empty
+            else if config_data.emails.contains_key(&email) && note.0.is_empty() {
+                Ok(false)
+            }
+            // Case 3: Email does not exist
+            else {
+                config_data.emails.insert(email, note);
+                self.write_config(&config_data)?;
+                Ok(true)
+            }
         }
 
         pub fn remove_email(&self, email: &String) -> anyhow::Result<bool> {
