@@ -2,7 +2,7 @@
 name = "duckmail"
 version = "0.1.0"
 edition = "2021"
-description = "Create and manage email addresses on duckduckgo"
+description = "Create and manage duckduckgo email addresses"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
