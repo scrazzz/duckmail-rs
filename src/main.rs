@@ -65,12 +65,10 @@ fn main() -> anyhow::Result<()> {
             if !is_added {
                 println!("[!] {} already exists", email);
                 return Ok(());
+            } else if new_note_empty {
+                println!("[*] Added {} to database", email);
             } else {
-                if new_note_empty {
-                    println!("[*] Added {} to database", email);
-                } else {
-                    println!("[*] Added {} to database with given note", email);
-                }
+                println!("[*] Added {} to database with given note", email);
             }
         }
         DuckMailCli::Remove(args) => {
