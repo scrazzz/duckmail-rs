@@ -64,14 +64,14 @@ pub mod db {
             let config_data = self.load_config()?;
             let token = config_data.access_token;
             if token.is_empty() {
-                anyhow::bail!("No access token found. Please run `duckmail token <token>` to set the access token");
+                anyhow::bail!("No access token found. Please run `duckmail token <access_token>` to set the access token");
             }
             let created_email = network::create_email(token)?;
             self.add_email(&created_email, note)?;
             Ok(created_email + "@duck.com")
         }
 
-        pub fn add_email(&self, email: &String, note: String) -> anyhow::Result<bool> {
+        pub fn add_email(&self, email: &String, note: String) -> anyhow::Result<()> {
             let email = if email.contains("@duck.com") {
                 Email(email.to_string())
             } else {
@@ -82,7 +82,7 @@ pub mod db {
             config_data.emails.entry(email).or_insert(note);
             self.write_config(&config_data)?;
             // println!("[DEBUG] Updated config.data.emails: {:?}", config_data);
-            Ok(true)
+            Ok(())
         }
 
         pub fn remove_email(&self, email: &String) -> anyhow::Result<bool> {
