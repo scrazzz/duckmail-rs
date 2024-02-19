@@ -2,6 +2,7 @@ use crate::config::db::Database;
 
 mod config;
 mod network;
+mod utils;
 
 use clap::Parser;
 use prettytable::{format, row, Table};
@@ -58,29 +59,26 @@ fn main() -> anyhow::Result<()> {
             println!("[*] Created new email: {}", email)
         }
         DuckMailCli::Add(args) => {
-            let fmt_email = if args.email.contains("@duck.com") {
-                args.email
-            } else {
-                args.email + "@duck.com"
-            };
-            let is_added = configdb.add_email(&fmt_email, args.note.unwrap_or_default())?;
+            let email = utils::format_email(&args.email);
+            let new_note_empty = args.note.as_deref().unwrap_or_default().is_empty();
+            let is_added = configdb.add_email(&email, args.note.unwrap_or_default())?;
             if !is_added {
-                println!("[!] {} already exists", fmt_email);
+                println!("[!] {} already exists", email);
                 return Ok(());
             } else {
-                println!("[*] Added {} to database", fmt_email);
+                if new_note_empty {
+                    println!("[*] Added {} to database", email);
+                } else {
+                    println!("[*] Added {} to database with given note", email);
+                }
             }
         }
         DuckMailCli::Remove(args) => {
-            let fmt_email = if !args.email.contains("@duck.com") {
-                args.email + "@duck.com"
+            let email = utils::format_email(&args.email);
+            if configdb.remove_email(&email)? {
+                println!("[*] Removed {} from database", email)
             } else {
-                args.email
-            };
-            if configdb.remove_email(&fmt_email)? {
-                println!("[*] Removed {} from database", fmt_email)
-            } else {
-                println!("[!] {} not found in database", fmt_email)
+                println!("[!] {} not found in database", email)
             }
         }
         DuckMailCli::Show => {
