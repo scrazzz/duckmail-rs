@@ -63,12 +63,11 @@ fn main() -> anyhow::Result<()> {
             let new_note_empty = args.note.as_deref().unwrap_or_default().is_empty();
             let is_added = configdb.add_email(&email, args.note.unwrap_or_default())?;
             if !is_added {
-                println!("[!] {} already exists", email);
-                return Ok(());
+                println!("[!] {} already exists", email)
             } else if new_note_empty {
-                println!("[*] Added {} to database", email);
+                println!("[*] Added {} to database", email)
             } else {
-                println!("[*] Added {} to database with given note", email);
+                println!("[*] Added {} to database with given note", email)
             }
         }
         DuckMailCli::Remove(args) => {
@@ -87,7 +86,7 @@ fn main() -> anyhow::Result<()> {
             emails.iter().enumerate().for_each(|(idx, (email, note))| {
                 table.add_row(row![idx + 1, email, note]);
             });
-            table.printstd();
+            table.printstd()
         }
         DuckMailCli::Token(args) => {
             println!(
@@ -95,14 +94,14 @@ fn main() -> anyhow::Result<()> {
             [!] WARNING: If this token is leaked there is no way revoke/invalidate it!",
                 args.token
             );
-            configdb.set_token(args.token)?;
+            configdb.set_token(args.token)?
         }
         DuckMailCli::Nuke => {
             let emails = configdb.return_emails()?;
             emails.iter().for_each(|(email, _)| {
                 configdb.remove_email(email).unwrap();
-                println!("[*] Removing email: {}", email);
-            });
+                println!("[*] Removing email: {}", email)
+            })
         }
     }
     Ok(())
