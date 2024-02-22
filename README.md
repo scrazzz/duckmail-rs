@@ -27,3 +27,15 @@ Options:
   -h, --help     Print help
   -V, --version  Print version
 ```
+
+## Learned
+What I have observed/learned/understood from making this program. 
+
+- Actually utilized `cargo clippy` and `cargo fmt`
+- Used `else if` for the first time in rust
+- Learned to make CLI subcommands using `clap`
+- Learned to use `anyhow`
+- Learned to use `prettytable-rs`
+- Learned to use rust `mod`ules
+- Learned to serialize and deserialize json <=> struct
+- Learned the difference between `pub(crate) fn` and `pub fn`
