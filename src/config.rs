@@ -34,7 +34,7 @@ pub mod db {
                 return Ok(Database { path });
             }
             let file = File::create(&path)?;
-            // Initialize
+            // Initialize config file with default values
             serde_json::to_writer(file, &Config::default())?;
             // println!("[DEBUG] config CREATED at: {:?}", path);
             Ok(Database { path })
@@ -60,7 +60,7 @@ pub mod db {
             Ok(())
         }
 
-        pub fn create_email(&self, note: String) -> anyhow::Result<String> {
+        pub fn create_new_email(&self, note: &str) -> anyhow::Result<String> {
             let config_data = self.load_config()?;
             let token = config_data.access_token;
             if token.is_empty() {
@@ -71,9 +71,9 @@ pub mod db {
             Ok(utils::format_email(&created_email))
         }
 
-        pub fn add_email(&self, email: &str, note: String) -> anyhow::Result<bool> {
+        pub fn add_email(&self, email: &str, note: &str) -> anyhow::Result<bool> {
             let email = Email(utils::format_email(email));
-            let note = Note(note);
+            let note = Note(note.to_string());
             let mut config_data = self.load_config()?;
 
             // Case 1: Email exists and new note to add is not empty
@@ -94,8 +94,9 @@ pub mod db {
             }
         }
 
-        pub fn remove_email(&self, email: &String) -> anyhow::Result<bool> {
+        pub fn remove_email(&self, email: &str) -> anyhow::Result<bool> {
             let mut config_data = self.load_config()?;
+            let email = utils::format_email(email);
             if config_data
                 .emails
                 .remove(&Email(email.to_string()))

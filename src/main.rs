@@ -55,27 +55,28 @@ fn main() -> anyhow::Result<()> {
     let args = DuckMailCli::parse();
     match args {
         DuckMailCli::New(args) => {
-            let email = configdb.create_email(args.note.unwrap_or_default())?;
+            let email = configdb.create_new_email(args.note.unwrap_or_default().as_str())?;
             println!("[*] Created new email: {}", email)
         }
         DuckMailCli::Add(args) => {
-            let email = utils::format_email(&args.email);
-            let new_note_empty = args.note.as_deref().unwrap_or_default().is_empty();
-            let is_added = configdb.add_email(&email, args.note.unwrap_or_default())?;
-            if !is_added {
-                println!("[!] {} already exists", email)
-            } else if new_note_empty {
-                println!("[*] Added {} to database", email)
+            let new_note = args.note.as_deref().unwrap_or_default();
+            let is_email_added = configdb.add_email(&args.email, new_note)?;
+            if !is_email_added {
+                println!("[!] {} already exists", &args.email)
+            } else if new_note.is_empty() {
+                println!("[*] Added {} to database", &args.email)
             } else {
-                println!("[*] Added {} to database with given note", email)
+                println!(
+                    "[*] Added {} to database with note: \"{}\"",
+                    &args.email, new_note
+                )
             }
         }
         DuckMailCli::Remove(args) => {
-            let email = utils::format_email(&args.email);
-            if configdb.remove_email(&email)? {
-                println!("[*] Removed {} from database", email)
+            if configdb.remove_email(&args.email)? {
+                println!("[*] Removed {} from database", &args.email)
             } else {
-                println!("[!] {} not found in database", email)
+                println!("[!] {} not found in database", &args.email)
             }
         }
         DuckMailCli::Show => {
