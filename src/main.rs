@@ -68,15 +68,16 @@ fn main() -> anyhow::Result<()> {
             } else {
                 println!(
                     "[*] Added {} to database with note: \"{}\"",
-                    &args.email, new_note
+                    utils::format_email(&args.email), new_note
                 )
             }
         }
         DuckMailCli::Remove(args) => {
-            if configdb.remove_email(&args.email)? {
-                println!("[*] Removed {} from database", &args.email)
+            let email = utils::format_email(&args.email);
+            if configdb.remove_email(&email)? {
+                println!("[*] Removed {} from database", email)
             } else {
-                println!("[!] {} not found in database", &args.email)
+                println!("[!] {} not found in database", email)
             }
         }
         DuckMailCli::Show => {
