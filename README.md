@@ -2,7 +2,7 @@
 A simple CLI program to manage duckduckgo emails.
 
 > [!NOTE]
-> *I don't expect anyone to use this program so there is no instructions on how to get your access token.*
+> *I do not expect anyone to use this program so there is no instructions on how to get your own access token.*
 
 ## Installation
 `cargo install --git https://github.com/scrazzz/duckmail-rs.git`

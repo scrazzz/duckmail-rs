@@ -68,7 +68,8 @@ fn main() -> anyhow::Result<()> {
             } else {
                 println!(
                     "[*] Added {} to database with note: \"{}\"",
-                    utils::format_email(&args.email), new_note
+                    utils::format_email(&args.email),
+                    new_note
                 )
             }
         }
