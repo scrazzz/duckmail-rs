@@ -2,10 +2,12 @@
 A simple CLI program to manage duckduckgo emails.
 
 > [!NOTE]
-> *I do not expect anyone to use this program so there is no instructions on how to get your own access token.*
+> *I don't expect anyone to use this program, so there are no instructions on how to obtain your own access token.*
 
 ## Installation
-`cargo install --git https://github.com/scrazzz/duckmail-rs.git`
+```
+cargo install --git https://github.com/scrazzz/duckmail-rs.git
+```
 
 ## Usage
 ```
@@ -29,13 +31,11 @@ Options:
 ```
 
 ## Learned
-What I have observed/learned/understood from making this program. 
+What I have observed/learned from making this program. 
 
-- Actually utilized `cargo clippy` and `cargo fmt`
-- Used `else if` for the first time in rust
+- Utilized `cargo clippy` and `cargo fmt`
 - Learned to make CLI subcommands using `clap`
-- Learned to use `anyhow`
-- Learned to use `prettytable-rs`
+- Learned to use `anyhow` and `prettytable-rs`
 - Learned to use rust `mod`ules
 - Learned to serialize and deserialize json <=> struct
 - Learned the difference between `pub(crate) fn` and `pub fn`
